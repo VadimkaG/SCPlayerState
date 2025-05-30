@@ -1,0 +1,6 @@
+name: PlayerState
+version: 1.0.0
+main: ru.seriouscompany.playerstate.PlayerState
+api-version: 1.21
+author: Vadimka
+depend: []
