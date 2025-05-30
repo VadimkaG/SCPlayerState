@@ -1,6 +1,7 @@
 package ru.seriouscompany.playerstate;
 
-import org.bukkit.Bukkit;
+import java.io.File;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,11 +22,36 @@ public class PlayerState extends JavaPlugin {
 		timeSaver = null;
 	}
 	/**
+	 * Загрузить игрока по его UUID
+	 * @param uuid
+	 * @return
+	 */
+	public PlayerStateMetadata loadFromUUID(String uuid) {
+		return new PlayerStateMetadata(
+				this,
+				new File(
+						getServer().getWorlds().getFirst().getName()+
+						File.separator+
+						"playerStates"+
+						File.separator+
+						uuid
+					)
+			);
+	}
+	/**
 	 * Инициализировать игрока
 	 * Это может потребоваться, если инициализация игрока происходит позже, чем требуется плагину
 	 * @param player - Игрок
 	 */
-	public static PlayerStateMetadata initPlayer(Player player) {
-		return PlayerListener.initPlayer(player,Bukkit.getPluginManager().getPlugin("PlayerState"));
+	public PlayerStateMetadata initPlayer(Player player) {
+		if (player.hasMetadata(PlayerStateMetadata.METADATA_NAME))
+			return PlayerStateMetadata.fromPlayer(player);
+		
+		PlayerStateMetadata meta = loadFromUUID(player.getUniqueId().toString());
+		player.setMetadata(
+			PlayerStateMetadata.METADATA_NAME,
+			meta
+		);
+		return meta;
 	}
 }
